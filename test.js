@@ -3,22 +3,23 @@ input="aaabbbcd"
 output="aaa3bbb3c1d1"
 
 function transformInput(inputData) {
-    let lastChar = null;
-    let charCount = 0;
-    let resultStr = '';
-    for (const char of inputData.split('')) {
-        if ((lastChar === null) || (lastChar && char === lastChar)) {
-            lastChar = char;
-            charCount++;
-            resultStr += char;
-        } if (lastChar && lastChar !== char) {
-            resultStr += `${char}${charCount}`;
-            lastChar = null;
+    let charCount = 1;
+    return inputData.split('').reduce((prev, next, index, arr) => {
+        let output = typeof prev === 'string' ? prev.split('') : prev;
+        const prevLetter = output.length ? output[output.length - 1] : null;
+        if (prevLetter && prevLetter !== next) {
+            output = output.concat(charCount);
             charCount = 0;
         }
-    }
-    return resultStr;
+        output = output.concat(next);
+        charCount++;
+        if (index === arr.length - 1) {
+            output = output.concat(charCount);
+        }
+        return output;
+    }).join('');
 }
 
-console.log(transformInput(input));
-console.log(transformInput(input) === output);
+const data = transformInput(input);
+console.log(data);
+console.log(data === output);
